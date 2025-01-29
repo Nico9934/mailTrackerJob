@@ -21,6 +21,7 @@ const loginRequest = async (user) => {
 };
 
 const logoutRequest = async (user) => {
+  console.log("Cerrando sesion desde el front... desde Auth.js")
   const res = await axios.post(`${API}/auth/logout`, user);
   return res;
 };

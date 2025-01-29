@@ -19,7 +19,9 @@ const EmailProvider = ({ children }) => {
     // Estados relacionados con la autenticación y el usuario
     const [user, setUser] = useState(null); // Cambié a null para diferenciar un usuario no autenticado
     const [isAuthenticated, setIsAuthenticated] = useState(false); // Inicializado como false
-    const [token, setToken] = useState(localStorage.getItem("authToken")); // Recuperar el token del localStorage
+    // const [token, setToken] = useState(localStorage.getItem("authToken")); // Recuperar el token del localStorage
+    const [token, setToken] = useState(sessionStorage.getItem("authToken")); // Cambiado de localStorage a sessionStorage
+
 
 
     // Función para manejar errores
@@ -34,7 +36,7 @@ const EmailProvider = ({ children }) => {
     const navigate = useNavigate(); // Hook para redirección
 
     useEffect(() => {
-        const storedToken = localStorage.getItem("authToken");
+        const storedToken = sessionStorage.getItem("authToken"); // Cambiado de localStorage a sessionStorage
         if (storedToken) {
             setToken(storedToken);
             setIsAuthenticated(true);
@@ -42,11 +44,11 @@ const EmailProvider = ({ children }) => {
         }
     }, []);
 
-    // Login
+    // Login: Guardar el token en sessionStorage
     const login = async (credentials) => {
         console.log(`Datos recibidos en el emailContext: ${JSON.stringify(credentials)}`);
         const { email, password } = credentials;
-        console.log(email, password);
+        console.log(email, password)
 
         try {
             console.log("Llamando al loginRequest");
@@ -56,7 +58,7 @@ const EmailProvider = ({ children }) => {
             const { token, user: userData } = res.data;
             setIsAuthenticated(true);
             setUser(userData);
-            localStorage.setItem("authToken", token); // Guardar token
+            sessionStorage.setItem("authToken", token); // Cambiado de localStorage a sessionStorage
             setToken(token);
 
             // Redirigir al dashboard
@@ -65,37 +67,54 @@ const EmailProvider = ({ children }) => {
             handleError(error);
         }
     };
-
+    // Register
     const register = async (newUser) => {
-        console.log(`Datos recibidos en emailContext en register: ${JSON.stringify(newUser)}`); // Convierte a string legible
+        console.log(`Datos recibidos en emailContext en register: ${JSON.stringify(newUser)}`);
         try {
-            console.log("Llamando al registerRequest");
+            console.log("Llamando al registerRequest...");
             const res = await registerRequest(newUser);
-            console.log("Esperando respuesta desde el loginRequest");
-            console.log(`res.data: ${JSON.stringify(res.data)}`); // Convierte la respuesta a string legible
-            const { token, user: userData } = res.data; // Similar al login
+            console.log(`Respuesta recibida en register Email Context: ${JSON.stringify(res.data)}`);
+            const { token, user: userData } = res.data;
+
+            if (!token) {
+                throw new Error("No se recibió un token válido.");
+            }
+
+            // Guardar datos en el estado y localStorage
             setIsAuthenticated(true);
             setUser(userData);
-            localStorage.setItem("authToken", token);
+            sessionStorage.setItem("authToken", token);
             setToken(token);
         } catch (error) {
-            handleError(error);
+            console.error("Error al registrar:", error.message);
+            handleError(error); // Manejo de errores
         }
     };
-
-
-
-    // Logout
+    // Logout: Eliminar el token desde sessionStorage
     const logout = async () => {
         try {
             await logoutRequest(); // Asumo que no necesita parámetros
             setIsAuthenticated(false);
             setUser(null);
-            localStorage.removeItem("authToken"); // Limpiar el token
+            sessionStorage.removeItem("authToken"); // Cambiado de localStorage a sessionStorage
         } catch (error) {
             handleError(error);
         }
     };
+
+    // RequestPasswordReset
+    const initPasswordReset = async (email) => {
+        console.log(`Datos recibidos en initPasswordReset: ${JSON.stringify(email)}`);
+        // try {
+        //     console.log("Llamando al requestPasswordReset...");
+        //     const res = await requestPasswordReset(email)
+        //     console.log(`Respuesta recibida en register Email Context: ${JSON.stringify(res.data)}`);
+        // }
+        // catch (error) {
+        //     console.log(error)
+        //     console.log("Ha ocurrido un error")
+        // }
+    }
 
     // Función para agregar a la lista de envío
     const handleAddToList = () => {
@@ -142,7 +161,8 @@ const EmailProvider = ({ children }) => {
                 logout,
                 user, setUser,
                 isAuthenticated, setIsAuthenticated,
-                token, setToken
+                token, setToken,
+                initPasswordReset
             }}
         >
             {children}

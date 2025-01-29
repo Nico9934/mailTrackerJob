@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Board from "./pages/Board";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EmailProvider from "./context/EmailContext";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
             <Route path="/board" element={<ProtectedRoute><Board /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/initPasswordReset" element={<RequestPasswordReset />} />
+
           </Routes>
         </div>
       </EmailProvider>

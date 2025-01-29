@@ -10,8 +10,11 @@ console.log("Continuando desde authRoutes.js".blue)
 
 router.post('/register', registerUser);
 router.post('/login', login);
-router.get('/logout', logout);
-router.get('/board', verifyToken, (req, res) => {
+router.post('/logout', logout);
+// router.post('/requestPasswordReset', requestPasswordReset);
+// router.post('/resetPassword', resetPassword);
+// router.get('/board', verifyToken, (req, res) => {
+router.get('/board', (req, res) => {
     res.status(200).json({ message: `Welcome to the board, user ID: ${req.user.id}` });
   });
 

@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useEmail } from "../context/EmailContext";
 import { useState } from "react";
 
 const Login = () => {
-
-    const { login } = useEmail();
+    const { login, isAuthenticated } = useEmail(); // Usamos isAuthenticated del contexto
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -12,12 +11,16 @@ const Login = () => {
         console.log(`Datos enviados desde login.jsx:`);
         console.log(`Email: ${email}`);
         console.log(`Password: ${password}`);
-        console.log("Desde handleSubmit en login.jsx")
+        console.log("Desde handleSubmit en login.jsx");
 
         e.preventDefault();
         login({ email, password });
     };
 
+    // Redirigir al dashboard si el usuario ya está autenticado
+    if (isAuthenticated) {
+        return <Navigate to="/board" replace />;
+    }
 
     return (
         <div className="mx-auto shadow-lg rounded-lg p-6 w-full max-w-md h-auto bg-white">
@@ -40,8 +43,6 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
-
-
                 </div>
                 <button
                     type="submit"
@@ -58,12 +59,19 @@ const Login = () => {
                     </Link>
                 </p>
             </div>
+            <div className="text-center mt-4">
+                <p className="text-gray-700">
+                    ¿Te olvidaste la contraseña?{" "}
+                    <Link to="/initPasswordReset" className="text-blue-500 hover:underline">
+                        Recuperala
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 };
 
 export default Login;
-
 
 
 

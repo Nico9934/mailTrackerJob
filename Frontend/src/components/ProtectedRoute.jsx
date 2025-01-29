@@ -1,12 +1,16 @@
-import { Navigate } from 'react-router-dom';
-import { useEmail } from '../context/EmailContext';
+import { Navigate } from "react-router-dom";
+import { useEmail } from "../context/EmailContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { token } = useEmail();
+  const { isAuthenticated, token } = useEmail();
 
-  return token ? children : <Navigate to="/login" />;
+  // Verifica si el usuario está autenticado y si existe un token válido
+  if (isAuthenticated && token) {
+    return children;
+  }
+
+  // Si no está autenticado, redirige al login
+  return <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
-
-
