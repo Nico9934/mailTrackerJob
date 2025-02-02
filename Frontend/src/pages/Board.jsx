@@ -7,7 +7,7 @@ const Board = () => {
     return (
         <>
             <HeaderNav></HeaderNav>
-            <div className="flex flex-col items-center w-full gap-6">
+            <div className="flex flex-col items-center w-full gap-6 p-6">
                 {/* Contenedor superior para el formulario de envío y la previsualización */}
                 <div className="flex w-full flex-wrap lg:flex-nowrap gap-6">
                     <SendData />

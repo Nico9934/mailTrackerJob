@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { registerRequest, loginRequest, logoutRequest } from "../api/auth.js";
 import { useNavigate } from "react-router-dom";
+import { saveEmailRequest } from "../api/email.js";
 
 const EmailContext = createContext();
 export const useEmail = () => useContext(EmailContext);
@@ -15,6 +16,8 @@ const EmailProvider = ({ children }) => {
     const [sendList, setSendList] = useState([]);
     const [expectativeSalary, setExpectativeSalary] = useState('');
     const [dollarSalary, setDollarSalary] = useState(false);
+    const [emails, setEmails] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     // Estados relacionados con la autenticación y el usuario
     const [user, setUser] = useState(null); // Cambié a null para diferenciar un usuario no autenticado
@@ -146,6 +149,34 @@ const EmailProvider = ({ children }) => {
         }
     };
 
+
+    // Guardar un email
+    const saveEmail = async (emailData, token) => {
+        setLoading(true);
+        try {
+            await saveEmailRequest(emailData, token);
+            alert("Email guardado con éxito");
+            fetchEmails(token); // Recargar emails después de guardar
+        } catch (error) {
+            console.error("Error al guardar el email:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Obtener emails
+    const fetchEmails = async (token) => {
+        setLoading(true);
+        try {
+            const data = await fetchEmailsRequest(token);
+            setEmails(data);
+        } catch (error) {
+            console.error("Error al obtener emails:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <EmailContext.Provider
             value={{
@@ -162,7 +193,11 @@ const EmailProvider = ({ children }) => {
                 user, setUser,
                 isAuthenticated, setIsAuthenticated,
                 token, setToken,
-                initPasswordReset
+                initPasswordReset,
+                saveEmail,
+                emails,
+                fetchEmails,
+                loading
             }}
         >
             {children}

@@ -10,13 +10,12 @@ function App() {
   return (
     <Router>
       <EmailProvider>
-        <div className="flex flex-col items-center justify-center gap-6 bg-gray-100 min-h-screen p-6">
+        <div className="flex flex-col items-center justify-center gap-6 bg-gray-100 min-h-screen">
           <Routes>
             <Route path="/board" element={<ProtectedRoute><Board /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/initPasswordReset" element={<RequestPasswordReset />} />
-
           </Routes>
         </div>
       </EmailProvider>
